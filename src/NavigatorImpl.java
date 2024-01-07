@@ -52,7 +52,8 @@ public class NavigatorImpl implements Navigator {
         for (String routeId : this.routes.keySet()) {
             Route route = this.routes.get(routeId);
             List<String> locationPoints = route.getLocationPoints();
-            if (locationPoints.get(0).equals(startPoint) && locationPoints.get(locationPoints.size()-1).equals(endPoint)) {
+            //if (locationPoints.get(0).equals(startPoint) && !locationPoints.get(0).equals(endPoint) && locationPoints.contains(endPoint))
+            if (locationPoints.getFirst().equals(startPoint) && locationPoints.getLast().equals(endPoint)) {
                 if (route.isFavorite()) {
                     favoriteRoutes.add(route);
                 } else {
@@ -60,6 +61,11 @@ public class NavigatorImpl implements Navigator {
                 }
             }
         }
+//        favoriteRoutes.sort(Comparator.comparingInt((Route r) -> r.getLocationPoints().size())
+//                .thenComparingInt(Route::getPopularity).reversed());
+//
+//        matchingRoutes.sort(Comparator.comparingInt((Route r) -> r.getLocationPoints().size())
+//                .thenComparingInt(Route::getPopularity).reversed());
 
         favoriteRoutes.sort(Comparator.comparingDouble(Route::getDistance)
                 .thenComparingInt(Route::getPopularity).reversed());
@@ -67,14 +73,14 @@ public class NavigatorImpl implements Navigator {
         matchingRoutes.sort(Comparator.comparingDouble(Route::getDistance)
                 .thenComparingInt(Route::getPopularity).reversed());
 
-        List<Route> result = new ArrayList<>();
-        result.addAll(favoriteRoutes);
-        result.addAll(matchingRoutes);
+        List<Route> routesResultList = new ArrayList<>();
+        routesResultList.addAll(favoriteRoutes);
+        routesResultList.addAll(matchingRoutes);
 
-        // Remove duplicates
-        result = result.stream().distinct().collect(Collectors.toList());
 
-        return result;
+        routesResultList = routesResultList.stream().distinct().collect(Collectors.toList());
+
+        return routesResultList;
     }
 
     @Override
@@ -83,15 +89,12 @@ public class NavigatorImpl implements Navigator {
         for (String id : routes.keySet()) {
             Route route = routes.get(id);
             List<String> locationPoints = route.getLocationPoints();
-            if (route.isFavorite() && !locationPoints.get(0).equals(destinationPoint) && locationPoints.contains(destinationPoint)) {
+            if (route.isFavorite() && !locationPoints.getFirst().equals(destinationPoint) && locationPoints.contains(destinationPoint)) {
                 matchingRoutes.add(route);
             }
         }
 
-        Collections.sort(matchingRoutes, Comparator.comparingDouble(Route::getDistance).reversed()
-                .thenComparingInt(Route::getPopularity).reversed());
-
-        // Remove duplicates
+        matchingRoutes.sort(Comparator.comparingDouble(Route::getDistance).reversed().thenComparingInt(Route::getPopularity).reversed());
         matchingRoutes = matchingRoutes.stream().distinct().collect(Collectors.toList());
 
         return matchingRoutes;
@@ -100,31 +103,8 @@ public class NavigatorImpl implements Navigator {
     @Override
     public Iterable<Route> getTop3Routes() {
         List<Route> topRoutesList = new ArrayList<>(routes.values());
-
-        Collections.sort(topRoutesList, (r1, r2) -> {
-            // First, sort the list by popularity
-            int popularityComparison = Integer.compare(r2.getPopularity(), r1.getPopularity());
-            if (popularityComparison != 0) {
-                return popularityComparison;
-            }
-
-            // Then, sort the list by distance (in ascending order)
-            int distanceComparison = Double.compare(r1.getDistance(), r2.getDistance());
-            if (distanceComparison != 0) {
-                return distanceComparison;
-            }
-
-            // Finally, sort the list by the number of location points (in ascending order)
-            return Integer.compare(r1.getLocationPoints().size(), r2.getLocationPoints().size());
-        });
-
-        if (topRoutesList.size() > 3) {
-            topRoutesList = topRoutesList.subList(0, 3);
-        }
-
-        // Remove duplicates
-        topRoutesList = topRoutesList.stream().distinct().collect(Collectors.toList());
-
-        return topRoutesList;
+        return topRoutesList.stream()
+                .sorted(Comparator.comparing(Route::getPopularity).reversed().thenComparing(Route::getDistance).thenComparing(route -> route.getLocationPoints().size()))
+                .limit(3).distinct().collect(Collectors.toList());
     }
 }

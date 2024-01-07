@@ -8,10 +8,10 @@ public class Route {
     private boolean isFavorite;
     private List<String> locationPoints;
 
-    public Route(String id, double distance, List<String> locationPoints, boolean isFavorite) {
+    public Route(String id, double distance, boolean isFavorite, List<String> locationPoints) {
         this.id = id;
         this.distance = distance;
-        this.popularity = 0; // По умолчанию популярность равна 0
+        this.popularity = 0;
         this.isFavorite = isFavorite;
         this.locationPoints = locationPoints;
     }
@@ -20,17 +20,13 @@ public class Route {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+
 
     public double getDistance() {
         return distance;
     }
 
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
+
 
     public int getPopularity() {
         return popularity;
@@ -44,17 +40,13 @@ public class Route {
         return isFavorite;
     }
 
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
-    }
+
 
     public List<String> getLocationPoints() {
         return locationPoints;
     }
 
-    public void setLocationPoints(List<String> locationPoints) {
-        this.locationPoints = locationPoints;
-    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -62,13 +54,13 @@ public class Route {
         if (o == null || getClass() != o.getClass()) return false;
         Route route = (Route) o;
         return Double.compare(route.getDistance(), getDistance()) == 0 &&
-                Objects.equals(getLocationPoints().get(0), route.getLocationPoints().get(0)) &&
-                Objects.equals(getLocationPoints().get(getLocationPoints().size() - 1), route.getLocationPoints().get(route.getLocationPoints().size() - 1));
+                Objects.equals(getLocationPoints().getFirst(), route.getLocationPoints().getFirst()) &&
+                Objects.equals(getLocationPoints().getLast(), route.getLocationPoints().getLast());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getLocationPoints().get(0), getLocationPoints().get(getLocationPoints().size() - 1), getDistance());
+        return Objects.hash(getLocationPoints().getFirst(), getLocationPoints().getLast(), getDistance());
     }
 
     @Override
