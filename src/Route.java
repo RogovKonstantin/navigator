@@ -16,35 +16,6 @@ public class Route {
         this.locationPoints = locationPoints;
     }
 
-    public String getId() {
-        return id;
-    }
-
-
-
-    public double getDistance() {
-        return distance;
-    }
-
-
-
-    public int getPopularity() {
-        return popularity;
-    }
-
-    public void setPopularity(int popularity) {
-        this.popularity = popularity;
-    }
-
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-
-
-    public List<String> getLocationPoints() {
-        return locationPoints;
-    }
 
 
 
@@ -72,5 +43,31 @@ public class Route {
                 ", isFavorite=" + isFavorite +
                 ", locationPoints=" + locationPoints +
                 '}';
+    }
+    public String getId() {
+        return id;
+    }
+
+
+    public double getDistance() {
+        return distance;
+    }
+
+
+    public int getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(int popularity) {
+        this.popularity = popularity;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+
+    public List<String> getLocationPoints() {
+        return locationPoints;
     }
 }
